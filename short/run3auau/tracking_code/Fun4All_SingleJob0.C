@@ -63,8 +63,8 @@ void Fun4All_SingleJob0(
   G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
   
   auto se = Fun4AllServer::instance();
-  se->Verbosity(1);
-  se->VerbosityDownscale(100); // only print every 1000th event
+  se->Verbosity(2);
+  //se->VerbosityDownscale(100); // only print every 1000th event
   auto rc = recoConsts::instance();
   
   std::ifstream ifs(filelist);
@@ -95,6 +95,7 @@ void Fun4All_SingleJob0(
       std::string inputname = "InputManager" + std::to_string(i);
       auto hitsin = new Fun4AllDstInputManager(inputname);
       hitsin->fileopen(filepath);
+      hitsin->CacheSize(0);
       se->registerInputManager(hitsin);
       i++;
     }
@@ -105,7 +106,7 @@ void Fun4All_SingleJob0(
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
-
+  
   std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
   ingeo->AddFile(geofile);
@@ -152,7 +153,7 @@ void Fun4All_SingleJob0(
 	    }
 	}
     }
-
+  
   Micromegas_HitUnpacking();
 
   Mvtx_Clustering();
@@ -204,7 +205,7 @@ void Fun4All_SingleJob0(
     out->AddNode("LAMINATION_CLUSTER");
   }
   se->registerOutputManager(out);
-
+  
   se->run(nEvents);
   se->End();
 
