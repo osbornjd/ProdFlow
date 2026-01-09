@@ -26,8 +26,9 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <mvtxrawhitqa/MvtxRawHitQA.h>
-#include <inttrawhitqa/InttQa.h>
+#include <inttrawhitqa/InttRawHitQA.h>
 #include <tpcqa/TpcRawHitQA.h>
+#include <tpcqa/TpcLaserQA.h>
 #include <phool/recoConsts.h>
 
 #include <stdio.h>
@@ -42,7 +43,7 @@ R__LOAD_LIBRARY(libinttrawhitqa.so)
 R__LOAD_LIBRARY(libmvtxrawhitqa.so)
 R__LOAD_LIBRARY(libtpcqa.so)
 R__LOAD_LIBRARY(libtrackingqa.so)
-void Fun4All_SingleJob0(
+void Fun4All_ana515_SingleJob0(
     const int nEvents = 2,
     const int runnumber = 41626,
     const std::string outfilename = "cosmics",
@@ -54,20 +55,22 @@ void Fun4All_SingleJob0(
   //char filename[500];
   //sprintf(filename, "%s%08d-0000.root", inputRawHitFile.c_str(), runnumber);
  
-
+  Enable::MVTX_APPLYMISALIGNMENT = true;
+  ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
+  
+  TRACKING::tpc_zero_supp = true;
+  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
+  
   auto se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
+  se->VerbosityDownscale(100); // only print every 1000th event
   auto rc = recoConsts::instance();
   
   std::ifstream ifs(filelist);
-  std::string filepath;
-
-  TRACKING::tpc_zero_supp = true;
-  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
-  Enable::MVTX_APPLYMISALIGNMENT = true;
-  ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
-  int i = 0;
+  std::string filepath; 
   
+  int i = 0;
+  bool process_endpoints = false;
   while(std::getline(ifs,filepath))
     {
       std::cout << "Adding DST with filepath: " << filepath << std::endl; 
@@ -80,13 +83,20 @@ void Fun4All_SingleJob0(
 	   rc->set_uint64Flag("TIMESTAMP", runNumber);
         
 	}
+       if(filepath.find("ebdc") != std::string::npos)
+	{
+	  if(filepath.find("_0_") != std::string::npos or
+	     filepath.find("_1_") != std::string::npos)
+	    {
+	      process_endpoints = true;
+	    }
+	}
       std::string inputname = "InputManager" + std::to_string(i);
       auto hitsin = new Fun4AllDstInputManager(inputname);
       hitsin->fileopen(filepath);
       se->registerInputManager(hitsin);
       i++;
     }
-
 
   CDBInterface::instance()->Verbosity(1);
 
@@ -101,7 +111,6 @@ void Fun4All_SingleJob0(
   se->registerInputManager(ingeo);
   
 
-  
   TrackingInit();
 
   for(int felix=0; felix < 6; felix++)
@@ -112,16 +121,35 @@ void Fun4All_SingleJob0(
     {
       Intt_HitUnpacking(std::to_string(server));
     }
+
+  std::cout << "Process endpoints is " << process_endpoints << std::endl;
   ostringstream ebdcname;
   for(int ebdc = 0; ebdc < 24; ebdc++)
     {
-      ebdcname.str("");
-      if(ebdc < 10)
+      if(!process_endpoints)
 	{
-	  ebdcname<<"0";
+	  ebdcname.str("");
+	  if(ebdc < 10)
+	    {
+	      ebdcname<<"0";
+	    }
+	  ebdcname<<ebdc;
+	  Tpc_HitUnpacking(ebdcname.str());
 	}
-      ebdcname<<ebdc;
-      Tpc_HitUnpacking(ebdcname.str());
+      
+      else if(process_endpoints)
+	{
+	  for(int endpoint = 0; endpoint <2; endpoint++)
+	    {
+	      ebdcname.str("");
+	      if(ebdc < 10)
+		{
+		  ebdcname<<"0";
+		}
+	      ebdcname<<ebdc <<"_"<<endpoint;
+	      Tpc_HitUnpacking(ebdcname.str());
+	    }
+	}
     }
 
   Micromegas_HitUnpacking();
@@ -131,10 +159,15 @@ void Fun4All_SingleJob0(
   Intt_Clustering();
 
   Tpc_LaserEventIdentifying();
-  
+
   TPC_LaserClustering();
 
-  TPC_Clustering_run2pp();
+  auto tpcclusterizer = new TpcClusterizer;
+  tpcclusterizer->Verbosity(0);
+  tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
+  tpcclusterizer->set_rawdata_reco();
+  tpcclusterizer->set_reject_event(G4TPC::REJECT_LASER_EVENTS);
+  se->registerSubsystem(tpcclusterizer);
 
   Micromegas_Clustering();
 
@@ -147,12 +180,15 @@ void Fun4All_SingleJob0(
   auto mvtx = new MvtxRawHitQA;
   se->registerSubsystem(mvtx);
 
-  auto intt = new InttQa;
+  auto intt = new InttRawHitQA;
   se->registerSubsystem(intt);
   
   auto tpc = new TpcRawHitQA;
   se->registerSubsystem(tpc);
 
+  auto LaserQA = new TpcLaserQA;
+  se->registerSubsystem(LaserQA);
+  
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
@@ -164,11 +200,6 @@ void Fun4All_SingleJob0(
   {
     out->AddNode("LASER_CLUSTER");
   }
-  out->StripRunNode("CYLINDERGEOM_MVTX");
-  out->StripRunNode("CYLINDERGEOM_INTT");
-  out->StripRunNode("CYLINDERCELLGEOM_SVTX");
-  out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
-  out->StripRunNode("GEOMETRY_IO");
   se->registerOutputManager(out);
 
   se->run(nEvents);

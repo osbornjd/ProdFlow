@@ -22,24 +22,41 @@ sphnxprod01:
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau    
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   # Cosmics
   Full_STREAMING_EVENT_run3cosmics:
     config: streaming_cosmics_ana514_2025p006_v001.yaml
-    runs: [74500 99000]
-    jobprio: 2000
+    runs: [76900 78954]
+    jobprio: 92
     submit: on
     dstspider: on
+    finishmon: off
+
+  # # CLUSTER physics
+  # Full_TRKR_CLUSTER_run3physics:
+  #   config: streaming_physics_ana514_2025p006_v001.yaml
+  #   runs: [76900 78508]
+  #   jobprio: 60
+  #   submit: on
+  #   dstspider: on
 
   # CLUSTER physics
   Full_TRKR_CLUSTER_run3physics:
-    config: streaming_physics_ana514_2025p006_v001.yaml
-    runs: [74500 90000]
-    jobprio: 3000
-    submit: on
+    config: streaming_physics_ana523_2025p007_v001.yaml
+    runs: [78602 78954]
+    jobprio: 60
+    submit: off
     dstspider: on
-    
+    finishmon: on
+
+  From514_TRKR_CLUSTER_run3physics:
+    config: streaming_physics_ana523_2025p007_v001.yaml
+    runs: [77000 78601]
+    jobprio: 60
+    submit: off
+    dstspider: on
+    finishmon: on
     
 ################################# Prod02 #######################################
 sphnxprod02:
@@ -52,44 +69,29 @@ sphnxprod02:
   # Laser
   DST_STREAMING_EVENT_run3line_laser:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [73000 99000]
-    jobprio: 4500
+    runs: [76900 78954]
+    jobprio: 92
     submit: on
 
-  # Calib
-  Full_STREAMING_EVENT_run3calib:
-    config: streaming_physics_ana514_2025p006_v001.yaml
-    runs: [74500 99000]
-    jobprio: 3000
-    submit: OFF
-    dstspider: on
-    
+  # Calib    
   DST_STREAMING_EVENT_run3calib:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [73000 99000]
-    jobprio: 4500
+    runs: [76900 78954]
+    jobprio: 92
     submit: on
 
   DST_TRKR_CLUSTER_run3calib:
     config: v001_tracking_supplemental_run3_new_newcdbtag.yaml
-    runs: [75000 99000]
-    jobprio: 4500
-    submit: on
+    runs: [76900 78954]
+    jobprio: 92
+    submit: off
 
   # SEED cosmics
   Full_TRKR_SEED_run3cosmics:    
     config: streaming_cosmics_ana514_2025p006_v001.yaml
-    runs: [74500 90000]
-    jobprio: 2000
+    runs: [76900 78954]
+    jobprio: 92
     submit: OFF
-    dstspider: on
-
-  # SEED physics
-  Full_TRKR_SEED_run3physics:
-    config: streaming_physics_ana514_2025p006_v001.yaml
-    runs: [74500 90000]
-    jobprio: 3000
-    submit: on
     dstspider: on
 
 ################################# Prod03 #######################################    
@@ -108,26 +110,30 @@ sphnxprod03:
   # Segment0 STREAMING
   Seg0_STREAMING_EVENT_run3physics:
     config: seg0_streaming_physics_new_nocdbtag_v001.yaml
-    runs: [74500 90000]
-    jobprio: 4500
+    runs: [78521 78954]
+    nevents: 400000
+    jobprio: 95
     submit: on
     dstspider: on
+    finishmon: on    
 
   # Segment0 CLUSTER
   Seg0_TRKR_CLUSTER_run3physics:
     config: seg0_streaming_physics_new_nocdbtag_v001.yaml
-    runs: [75000 90000]
-    jobprio: 4500
-    submit: on
+    runs: [78521 78954]
+    jobprio: 65
+    submit: off
     dstspider: on
+    finishmon: on
 
   # Segment0 SEED
   Seg0_TRKR_SEED_run3physics:
     config: seg0_streaming_physics_new_nocdbtag_v001.yaml
-    runs: [75000 90000]
-    jobprio: 4500
+    runs: [78521 78954]
+    jobprio: 35
     submit: on
     dstspider: on
+    finishmon: on
 
 ################################# prod04 #######################################
 sphnxprod04:
@@ -140,31 +146,50 @@ sphnxprod04:
   # Rolling TRIGGERED production
   Full_TRIGGERED_EVENT_run3physics:
     config: calo_physics_new_nocdbtag_v001.yaml
-    runs: [73000 99000]
-    jobprio: 4500
+    runs: [76900 78954]
+    jobprio: 90
     submit: OFF
     dstspider: on
     
   # Rolling CALOFITTING PRODUCTION
   Full_CALOFITTING_run3physics:
     config: calo_physics_new_nocdbtag_v001.yaml
-    runs: [73000 99000]
-    jobprio: 4500
+    runs: [76900 78954]
+    jobprio: 40
     submit: OFF
     dstspider: on
 
+  # # STREAMING physics
+  # Full_STREAMING_EVENT_run3physics:
+  #   config: streaming_physics_ana514_2025p006_v001.yaml
+  #   runs: [76900 78508]
+  #   jobprio: 90
+  #   submit: on
+  #   dstspider: on
+
   # STREAMING physics
   Full_STREAMING_EVENT_run3physics:
-    config: streaming_physics_ana514_2025p006_v001.yaml
-    runs: [74500 99000]
-    jobprio: 3000
+    config: streaming_physics_ana523_2025p007_v001.yaml
+    runs: [77989 78954]
+    jobprio: 90
     submit: on
     dstspider: on
+    finishmon: on
 
   # CLUSTER cosmics
   Full_TRKR_CLUSTER_run3cosmics:    
     config: streaming_cosmics_ana514_2025p006_v001.yaml
-    runs: [74500 90000]
-    jobprio: 2000
+    runs: [76900 78954]
+    jobprio: 92
+    submit: off
+    dstspider: on
+
+  # SEED physics
+  Full_TRKR_SEED_run3physics:
+    config: streaming_physics_ana523_2025p007_v001.yaml
+    # runs: [78602 78954]
+    runs: [77000 78954]
+    jobprio: 30
     submit: on
     dstspider: on
+    finishmon: on

@@ -19,6 +19,7 @@
 
 
 #include <trackingqa/InttClusterQA.h>
+#include <inttrawhitqa/InttQa.h>
 #include <trackingqa/MicromegasClusterQA.h>
 #include <trackingqa/MvtxClusterQA.h>
 #include <trackingqa/TpcClusterQA.h>
@@ -43,7 +44,7 @@ R__LOAD_LIBRARY(libinttrawhitqa.so)
 R__LOAD_LIBRARY(libmvtxrawhitqa.so)
 R__LOAD_LIBRARY(libtpcqa.so)
 R__LOAD_LIBRARY(libtrackingqa.so)
-void Fun4All_ana514_SingleJob0(
+void Fun4All_SingleJob0(
     const int nEvents = 2,
     const int runnumber = 41626,
     const std::string outfilename = "cosmics",
@@ -62,7 +63,7 @@ void Fun4All_ana514_SingleJob0(
   G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
   
   auto se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
   se->VerbosityDownscale(100); // only print every 1000th event
   auto rc = recoConsts::instance();
   
@@ -160,8 +161,6 @@ void Fun4All_ana514_SingleJob0(
 
   Tpc_LaserEventIdentifying();
 
-  TPC_LaminationClustering();
-
   TPC_LaserClustering();
 
   auto tpcclusterizer = new TpcClusterizer;
@@ -181,9 +180,8 @@ void Fun4All_ana514_SingleJob0(
 
   auto mvtx = new MvtxRawHitQA;
   se->registerSubsystem(mvtx);
-
-  auto intt = new InttRawHitQA;
-  se->registerSubsystem(intt);
+  
+  se->registerSubsystem(new InttQa);
   
   auto tpc = new TpcRawHitQA;
   se->registerSubsystem(tpc);
@@ -201,7 +199,6 @@ void Fun4All_ana514_SingleJob0(
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
-    out->AddNode("LAMINATION_CLUSTER");
   }
   se->registerOutputManager(out);
 

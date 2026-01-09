@@ -162,8 +162,6 @@ void Fun4All_SingleJob0(
 
   Tpc_LaserEventIdentifying();
 
-  TPC_LaminationClustering();
-
   TPC_LaserClustering();
 
   auto tpcclusterizer = new TpcClusterizer;
@@ -202,7 +200,6 @@ void Fun4All_SingleJob0(
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
-    out->AddNode("LAMINATION_CLUSTER");
   }
   se->registerOutputManager(out);
   

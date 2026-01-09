@@ -1,5 +1,5 @@
 #______________________________________________________________________________________________________________________
-Seg0_STREAMING_EVENT_run3physics:
+Full_STREAMING_EVENT_run3physics:
   params:
     dsttype:    DST_STREAMING_EVENT
     period:     run3auau
@@ -7,14 +7,14 @@ Seg0_STREAMING_EVENT_run3physics:
     dataset:    run3auau # could be run3physics, run3calib, etc.
     build:      new
     dbtag:      nocdbtag
-    version:    1
+    version:    666
 
   input:
     db:          rawr
     table:       datasets
     min_run_time:   300
     min_run_events: 100000
-    combine_seg0_only: true
+    combine_seg0_only: false
     
   job:
     script:                 run_parallel_streams.sh
@@ -27,7 +27,7 @@ Seg0_STREAMING_EVENT_run3physics:
     priority:              '3500'
 
 #______________________________________________________________________________________________________________________
-Seg0_TRKR_CLUSTER_run3physics:
+Full_TRKR_CLUSTER_run3physics:
   params:
     dsttype:     DST_TRKR_CLUSTER
     period:      run3auau
@@ -35,12 +35,12 @@ Seg0_TRKR_CLUSTER_run3physics:
     dataset:     run3auau # could be run3physics, run3calib, etc.
     build:       new
     dbtag:       newcdbtag
-    version:     1
+    version:     666
 
   input:
     db:          fcr
     table:       datasets
-    intriplet:   new_nocdbtag_v001
+    intriplet:   new_nocdbtag_v666
 
   job:
     script:                 run_rolloverjob0.sh
@@ -53,7 +53,7 @@ Seg0_TRKR_CLUSTER_run3physics:
     priority:              '3500'
 
 #______________________________________________________________________________________________________________________
-Seg0_TRKR_SEED_run3physics:
+Full_TRKR_SEED_run3physics:
   params:
     dsttype:     DST_TRKR_SEED
     period:      run3auau
@@ -61,12 +61,12 @@ Seg0_TRKR_SEED_run3physics:
     dataset:     run3auau # could be run3physics, run3calib, etc.
     build:       new
     dbtag:       newcdbtag
-    version:     1
-
+    version:     666
   input:
     db:          fcr
     table:       datasets
-    intriplet:   new_newcdbtag_v001
+    intriplet:   new_nocdbtag_v666
+    # cut_segment: 10
 
   job:
     script:                 run_jobA.sh

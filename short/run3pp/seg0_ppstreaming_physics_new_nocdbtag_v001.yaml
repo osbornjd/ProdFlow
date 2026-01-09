@@ -1,10 +1,10 @@
 #______________________________________________________________________________________________________________________
-Seg0_STREAMING_EVENT_run3physics:
+Seg0_STREAMING_EVENT_run3pp:
   params:
     dsttype:    DST_STREAMING_EVENT
-    period:     run3auau
+    period:     run3pp
     physicsmode: physics
-    dataset:    run3auau # could be run3physics, run3calib, etc.
+    dataset:    run3pp
     build:      new
     dbtag:      nocdbtag
     version:    1
@@ -24,15 +24,15 @@ Seg0_STREAMING_EVENT_run3physics:
     request_memory:         3072MB
     request_xferslots:     '3'    
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '95'
 
 #______________________________________________________________________________________________________________________
-Seg0_TRKR_CLUSTER_run3physics:
+Seg0_TRKR_CLUSTER_run3pp:
   params:
     dsttype:     DST_TRKR_CLUSTER
-    period:      run3auau
+    period:      run3pp
     physicsmode: physics
-    dataset:     run3auau # could be run3physics, run3calib, etc.
+    dataset:     run3pp # could be run3physics, run3calib, etc.
     build:       new
     dbtag:       newcdbtag
     version:     1
@@ -50,15 +50,15 @@ Seg0_TRKR_CLUSTER_run3physics:
     request_memory:         12228MB
     request_cpus:          '4'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '95'
 
 #______________________________________________________________________________________________________________________
-Seg0_TRKR_SEED_run3physics:
+Seg0_TRKR_SEED_run3pp:
   params:
     dsttype:     DST_TRKR_SEED
-    period:      run3auau
+    period:      run3pp
     physicsmode: physics
-    dataset:     run3auau # could be run3physics, run3calib, etc.
+    dataset:     run3pp # could be run3physics, run3calib, etc.
     build:       new
     dbtag:       newcdbtag
     version:     1
@@ -76,4 +76,4 @@ Seg0_TRKR_SEED_run3physics:
     request_memory:         4096MB
     request_cpus:          '2'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '95'
